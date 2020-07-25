@@ -4,17 +4,9 @@
 """
 
 import cv2
-
 from tensorflow.keras.models import model_from_json
-import matplotlib.pyplot as plt
 import numpy as np
-import cv2
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.layers import Dense, MaxPooling2D, Flatten, Dropout, Conv2D, GlobalAveragePooling2D
-from tensorflow.keras.optimizers import Adam
-    
 with open('files\\model\\model_mask.json', 'r') as f:
     loaded_model_json = f.read()
 model = model_from_json(loaded_model_json)
