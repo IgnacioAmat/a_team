@@ -39,8 +39,8 @@ def faceDetectorImg(path):
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
     # Draw rectangle around the faces
     for (x, y, w, h) in faces:
-        #slicedImg = img[y:y+h,x:x+w]
-        pred = model.predict(prepImg(img))
+        slicedImg = img[y:y+h,x:x+w]
+        pred = model.predict(prepImg(slicedImg))
         pred = np.argmax(pred)
         cv2.rectangle(img, (x, y), (x+w, y+h), colorMap[pred], 2)
         cv2.putText(img, resMap[pred],(x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2) 
@@ -69,11 +69,11 @@ def faceDetectorVideo(path = ""):
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
         # Draw the rectangle around each face
         for (x, y, w, h) in faces:
-            #slicedImg = img[y:y+h,x:x+w]
-            pred = model.predict(prepImg(img))
+            slicedImg = img[y:y+h,x:x+w]
+            pred = model.predict(prepImg(slicedImg))
             pred = np.argmax(pred)
             cv2.rectangle(img, (x, y), (x+w, y+h), colorMap[pred], 2)
-            cv2.putText(img, resMap[pred],(x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2) 
+            cv2.putText(img, resMap[pred],(x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2)
         # Display
         cv2.imshow('img', img)
         # Stop if escape key is pressed
