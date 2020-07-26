@@ -4,6 +4,7 @@
 """
 
 import cv2
+from mtcnn.mtcnn import MTCNN
 from tensorflow.keras.models import model_from_json
 import numpy as np
 
@@ -27,18 +28,30 @@ colorMap = {
 def prepImg(pth):
     return cv2.resize(pth,(224,224)).reshape(1,224,224,3)/255.0
 
-def faceDetectorImg(path):
-    
+def faceDetectorImg(path, use_CV2 = False):
     # Load the cascade
     face_cascade = cv2.CascadeClassifier('files\\weights\\haarcascade_frontalface_default.xml')
     # Read the input image
     img = cv2.imread(path)
-    # Convert into grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # Detect faces
-    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    if use_CV2:
+        # Convert into grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Detect faces
+        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    else:
+        #Create MTCNN detector
+        detector = MTCNN()
+        # Detect faces
+        faces = detector.detect_faces(img)
+        
     # Draw rectangle around the faces
-    for (x, y, w, h) in faces:
+    for result in faces:
+        if use_CV2:
+            (x, y, w, h) = result
+        else:
+            x, y, w, h = result['box']
+        x, y, w, h = result['box']
         slicedImg = img[y:y+h,x:x+w]
         pred = model.predict(prepImg(slicedImg))
         pred = np.argmax(pred)
@@ -49,7 +62,7 @@ def faceDetectorImg(path):
     cv2.waitKey()
     cv2.destroyAllWindows()
     
-def faceDetectorVideo(path = ""):
+def faceDetectorVideo(path = "", use_CV2 = False):
     # Load the cascade
     face_cascade = cv2.CascadeClassifier('files\\weights\\haarcascade_frontalface_default.xml')
     
@@ -60,20 +73,35 @@ def faceDetectorVideo(path = ""):
         # To use a video file as input 
         cap = cv2.VideoCapture(path)
     
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    out = cv2.VideoWriter('files\\videos\\mtcnn_mask_detection.mp4',fourcc, 5, (720,480))
+
+    #Create MTCNN detector
+    detector = MTCNN()
     while True:
         # Read the frame
         _, img = cap.read()
-        # Convert to grayscale
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # Detect the faces
-        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
-        # Draw the rectangle around each face
-        for (x, y, w, h) in faces:
+        if use_CV2:
+            # Convert into grayscale
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # Detect faces
+            faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        else:
+            # Detect faces
+            faces = detector.detect_faces(img)
+            
+        for result in faces:
+            if use_CV2:
+                (x, y, w, h) = result
+            else:
+                x, y, w, h = result['box']
             slicedImg = img[y:y+h,x:x+w]
             pred = model.predict(prepImg(slicedImg))
             pred = np.argmax(pred)
             cv2.rectangle(img, (x, y), (x+w, y+h), colorMap[pred], 2)
             cv2.putText(img, resMap[pred],(x,y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2)
+        out.write(img)
+        
         # Display
         cv2.imshow('img', img)
         # Stop if escape key is pressed
@@ -82,6 +110,7 @@ def faceDetectorVideo(path = ""):
             break
     # Release the VideoCapture object
     cap.release()
+    out.release()
     cv2.destroyAllWindows()
       
 def main():
