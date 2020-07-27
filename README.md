@@ -1,11 +1,12 @@
 # Safer Wherever
 
-The aim of this project is to develop a solution based on the use of AI for a post CoVid-19 world as part of the #BuildwithAI : Emergence! Hackathon.
+The aim of this project is to develop a solution based on the use of AI for a post CoVid-19 world as part of the **#BuildwithAI : Emergence!** Hackathon.
 The whole project can be found in our team [repo](https://github.com/Build-with-AI-a-team).
 
 ## Face Mask Training
 
 Face mask detection model based on the MobileNetV2 architecture.
+The training and test images used to train the model can be found on [prajnasb](https://github.com/prajnasb/observations) github.
 
 ## Face Detection
 
