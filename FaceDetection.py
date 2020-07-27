@@ -1,13 +1,15 @@
 """
-    Face detection methods for both image and video
-    Code based in https://towardsdatascience.com/face-detection-in-2-minutes-using-opencv-python-90f89d7c0f81
+    Face detection methods for both image and video with two posible classifiers, Haar classifier or MTCNN
 """
 
+#Imports section
 import cv2
 from mtcnn.mtcnn import MTCNN
 from tensorflow.keras.models import model_from_json
 import numpy as np
 
+
+#Load model
 with open('files\\model\\model_mask.json', 'r') as f:
     loaded_model_json = f.read()
 model = model_from_json(loaded_model_json)
@@ -26,9 +28,17 @@ colorMap = {
     }
 
 def prepImg(pth):
+    """
+    Prepare image for further treatment
+    """
+    
     return cv2.resize(pth,(224,224)).reshape(1,224,224,3)/255.0
 
 def faceDetectorImg(path, use_CV2 = False):
+    """
+    Detect people wearing face masks or not in an image located in path using Haar clasifier or MTCNN
+    """
+    
     # Load the cascade
     face_cascade = cv2.CascadeClassifier('files\\weights\\haarcascade_frontalface_default.xml')
     # Read the input image
@@ -63,6 +73,11 @@ def faceDetectorImg(path, use_CV2 = False):
     cv2.destroyAllWindows()
     
 def faceDetectorVideo(path = "", use_CV2 = False):
+    """
+    Detect people wearing face masks or not in a video located in path or if empty with webcam using Haar clasifier or MTCNN
+    
+    """
+    
     # Load the cascade
     face_cascade = cv2.CascadeClassifier('files\\weights\\haarcascade_frontalface_default.xml')
     

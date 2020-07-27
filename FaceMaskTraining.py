@@ -1,8 +1,8 @@
 """
-Face mask detection model
-Based on https://github.com/HOD101s/Face-Mask-Detection
+Face mask detection model using MobileNetV2 model
 """
 
+#Imports
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,15 +25,13 @@ from tensorflow.keras.layers import Dense, MaxPooling2D, Flatten, Dropout, Conv2
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint
 
-"""### Fetch data"""
-
+# Fetch data
 DATAPATH = 'files\\images\\face_mask_data'
 MASKPATH = 'files\\images\\face_mask_data\\with_mask'
 NOMASKPATH = 'files\\images\\face_mask_data\\without_mask'
 TESTPATH = 'files\\images\\test_face_mask_data'
 
-"""### Visualize data"""
-
+# Visualize data
 def view(pth):
     images = list()
     for img in random.sample(os.listdir(pth),9):
@@ -49,16 +47,14 @@ view(MASKPATH)
 
 view(NOMASKPATH)
 
-"""### Analyse data"""
-
+# Analyse data
 fig = go.Figure(
     data=[go.Pie(labels=['WITHMASK','WITHOUTMASK'], 
         values=[len(os.listdir(MASKPATH)),len(os.listdir(NOMASKPATH))])
     ])
 fig.show()
 
-"""### Splitting data"""
-
+# Splitting data
 os.mkdir(TESTPATH)
 os.mkdir(os.path.join(TESTPATH,'with_mask'))
 os.mkdir(os.path.join(TESTPATH,'without_mask'))
@@ -74,8 +70,7 @@ len(os.listdir(MASKPATH)),len(os.listdir(NOMASKPATH))
 
 len(os.listdir(os.path.join(TESTPATH,'with_mask'))),len(os.listdir(os.path.join(TESTPATH,'without_mask')))
 
-"""### Prepare data input pipeline"""
-
+# Prepare data input pipeline
 BATCH_SIZE = 32
 
 trainGen = ImageDataGenerator(
@@ -117,8 +112,7 @@ test = testGen.flow_from_directory(
     shuffle=True,
 )
 
-"""### Model building"""
-
+# Model building
 mob = MobileNetV2(
     input_shape = (224,224,3),
     include_top = False,
@@ -142,6 +136,7 @@ with open("files\\model\\model_mask.json", "w") as json_file:
 
 model.compile(optimizer=Adam(),loss='categorical_crossentropy',metrics=['acc'])
 
+#Add checkpoints
 checkpoint = ModelCheckpoint(
     'files\\weights\\model_mask.h5',
     monitor='val_loss',
@@ -151,6 +146,7 @@ checkpoint = ModelCheckpoint(
     mode='min'
 )
 
+#Fit model
 hist = model.fit(
     train,
     epochs = 15,
