@@ -1,0 +1,63 @@
+# Images #
+##########
+*.jpg
+*.gif
+*.png
+*.svg
+*.ico
+
+# Videos #
+##########
+*.wmv
+*.mpg
+*.mpeg
+*.mp4
+*.mov
+*.flv
+*.avi
+*.ogv
+*.ogg
+*.webm
+
+# Audio #
+#########
+*.wav
+*.mp3
+*.wma
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Compiled #
+############
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.weights
+*.h5
+
+# Text Editor #
+###############
+*.pyc
+*.docx
+
+# Others #
+##########
+files/images/faster_rcnn_inception_resnet_v2_640x640_coco17_tpu-8/*
+files/config/*
+files/model/*
+files/misc/*
+*.index
+*.pb
+*.xml
